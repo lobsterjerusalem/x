@@ -74,10 +74,10 @@ func main(){
 
 		sim := jaccardSimilarity(fOneStr, fTwoStr) 
 		if useJaccard {
-			if sim > threshold {
-				continue
+			if sim < threshold {
+				fmt.Printf("\tjaccard: %f for line %d\n%s\n%s\n\n", sim, n, fOneStr, fTwoStr)
 			}
-			fmt.Printf("\tjaccard: %f\n%s\n%s\n\n", sim, fOneStr, fTwoStr)
+			continue
 		}
 
 		// we anticipate the fact that one byte being off
