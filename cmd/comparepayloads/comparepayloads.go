@@ -63,11 +63,11 @@ func main(){
 	mismatched := 0
 	total := len(fileOneLines)
 	for n := range len(fileOneLines) {
-		fOneStr := fileOneLines[n]
-		fTwoStr := fileTwoLines[n]
+		fOneStr := string(fileOneLines[n])
+		fTwoStr := string(fileTwoLines[n])
 
 		// too short to substring out
-		if len(fOneStr) < 6 || len(fTwoStr) < 6 {
+		if len(fOneStr) < 8 || len(fTwoStr) < 8 {
 			skipped++
 			continue
 		}
@@ -81,7 +81,7 @@ func main(){
 		}
 
 		// we anticipate the fact that one byte being off
-		if strings.Contains(fOneStr, fTwoStr[2:len(fTwoStr)-2]) {
+		if strings.Contains(fOneStr, fTwoStr[4:len(fTwoStr)-2]) {
 			continue
 		}
 		mismatched++
