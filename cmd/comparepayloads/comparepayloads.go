@@ -2,16 +2,29 @@ package main
 
 import (
 	"os"
+	"strconv"
 	"strings"
 	"fmt"
 )
 
 func main(){
-	if len(os.Args) != 3 {
-		fmt.Println("Usage: comparehexpayloads <file one> <file two>")
+	useJaccard := false
+	threshold := .8
+	if len(os.Args) < 3 {
+		fmt.Println("Usage: comparehexpayloads <file one> <file two> <optional: jaccard similarity threshold (float) e.g: .8>")
 		fmt.Println("Note: The files should be mostly the same this was made to compare hex of payloads that are one byte off in order to find length offsets.")
 		fmt.Println("The output is derived by running xxd on the payloads and only comparing the hex")
 		os.Exit(1)
+	}
+
+	if len(os.Args) == 4 {
+		useJaccard = true
+		f, err := strconv.ParseFloat(os.Args[3], 64)
+		if err != nil {
+			fmt.Printf("ERR: the jaccard arg should be a float, a good number might be .8, err=%s", err)
+			os.Exit(1)
+		}
+		threshold = f
 	}
 
 	fileOne := os.Args[1]
@@ -59,7 +72,13 @@ func main(){
 			continue
 		}
 
-		jaccardSimilarity(fOneStr, fTwoStr) //again.. right now this line is pointless
+		sim := jaccardSimilarity(fOneStr, fTwoStr) 
+		if useJaccard {
+			if sim > threshold {
+				continue
+			}
+			fmt.Printf("\tjaccard: %f\n%s\n%s\n\n", sim, fOneStr, fTwoStr)
+		}
 
 		// we anticipate the fact that one byte being off
 		if strings.Contains(fOneStr, fTwoStr[2:len(fTwoStr)-2]) {
